@@ -12,9 +12,13 @@ const URL_FILMES = "https://api.themoviedb.org/3/movie/now_playing";
 const URL_GENEROS = "https://api.themoviedb.org/3/genre/movie/list?language=pt-BR";
 const listaFilmes = document.getElementById("listaFilmes");
 
+let todosOsFilmes = [];
+let todosOsGeneros = [];
+
 async function iniciarPagina() {
-    const generos = await buscarGenero();
-    await buscarFilmes(generos);
+    todosOsGeneros = await buscarGenero();
+    todosOsFilmes = await buscarFilmes();
+    mostrarFilmes(todosOsFilmes);
 }
 
 async function buscarGenero() {
@@ -23,35 +27,47 @@ async function buscarGenero() {
     return dados.genres;
 }
 
-function mostrarGenero(filme, generos) {
+async function buscarFilmes() {
+    const resposta = await fetch(URL_FILMES, opcoes);
+    const dados = await resposta.json();
+    return dados.results;
+}
+
+function filtrarFilmes() {
+    const input = document.querySelector("input");
+    const textoDigitado = input.value.toLowerCase();
+
+    // CRITÉRIO: Filtro por título OU descrição (overview)
+    const filmesFiltrados = todosOsFilmes.filter(function(filme) {
+        const titulo = filme.title.toLowerCase();
+        const descricao = filme.overview.toLowerCase();
+        
+        return titulo.includes(textoDigitado) || descricao.includes(textoDigitado);
+    });
+
+    mostrarFilmes(filmesFiltrados);
+}
+
+function obterTextoGeneros(filme, generos) {
     const nomesDosGeneros = filme.genre_ids.map(function(idGenero) {
         const generoEncontrado = generos.find(function(genero) {
             return genero.id === idGenero;
         });
-
-        if (generoEncontrado) {
-            return generoEncontrado.name;
-        }
-
-        return "Gênero não encontrado";
+        return generoEncontrado ? generoEncontrado.name : "Gênero não encontrado";
     });
 
     return nomesDosGeneros.join(", ");
 }
 
-async function buscarFilmes(generos) {
-    const resposta = await fetch(URL_FILMES, opcoes);
-    const dados = await resposta.json();
-    mostrarFilmes(dados.results, generos);
-}
-
-function mostrarFilmes(filmes, generos) {
+function mostrarFilmes(filmes) {
     listaFilmes.innerHTML = "";
 
     for (let i = 0; i < filmes.length; i++) {
         const filme = filmes[i];
         const img = `https://image.tmdb.org/t/p/w185/${filme.poster_path}`;
-        const textoGeneros = mostrarGenero(filme, generos);
+        
+        // CRITÉRIO: Gêneros aparecem com nomes
+        const textoGeneros = obterTextoGeneros(filme, todosOsGeneros);
 
         listaFilmes.innerHTML += `
             <div class="filme">

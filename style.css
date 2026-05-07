@@ -43,6 +43,10 @@ body {
   margin-bottom: 24px;
   font-weight: bold;
 }
+.mensagem input{
+  width: 80%;
+  height: 30px;
+}
 
 .lista-filmes {
   display: grid;
@@ -75,7 +79,9 @@ body {
   line-height: 1.4;
   color: #334155;
 }
-
+#title {
+  font-weight: 800;
+}
 .generos {
   font-weight: bold;
   color: #0f766e;

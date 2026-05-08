@@ -37,7 +37,7 @@ function filtrarFilmes() {
     const input = document.querySelector("input");
     const textoDigitado = input.value.toLowerCase();
 
-    // CRITÉRIO: Filtro por título OU descrição (overview)
+  
     const filmesFiltrados = todosOsFilmes.filter(function(filme) {
         const titulo = filme.title.toLowerCase();
         const descricao = filme.overview.toLowerCase();
@@ -66,7 +66,7 @@ function mostrarFilmes(filmes) {
         const filme = filmes[i];
         const img = `https://image.tmdb.org/t/p/w185/${filme.poster_path}`;
         
-        // CRITÉRIO: Gêneros aparecem com nomes
+       
         const textoGeneros = obterTextoGeneros(filme, todosOsGeneros);
 
         listaFilmes.innerHTML += `
